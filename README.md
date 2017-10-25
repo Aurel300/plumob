@@ -37,7 +37,7 @@ To build apps for the iOS with plumob, you will need:
 
 Plumob was only tested on a vagrant box packaged with OS X Sierra, XCode 8.2, and iOS SDKs 10.2. To replicate this set up, you can download the box:
 
- - [`vagrant-box-osx``](https://github.com/AndrewDryga/vagrant-box-osx).
+ - [`vagrant-box-osx`](https://github.com/AndrewDryga/vagrant-box-osx).
 
 With this, builds should work. The Objective-C glue code will ensure your project's `Main.main()` method is called when the app is launched. However, the window creation, as well as view / view controller initialisation is not done. Your project should do this. It is recommended to use:
 

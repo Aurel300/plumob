@@ -6,7 +6,6 @@ class XCProject {
   public var sim:Bool = false;
   public var version:String = "8.0";
   public var arch:Array<String> = [];
-  public var SDL:Bool = false;
   
   public var appFilename(get, never):String;
   private inline function get_appFilename():String {
@@ -225,55 +224,11 @@ class XCProject {
         ,"          \"-fstrict-aliasing\","
         ,"        );"
       ]);
-    if (SDL/* || hxcpp*/) {
-      addLines([
-           '        "LIBRARY_SEARCH_PATHS" = ('
-          ,'          "$(inherited)",'
-          ,"          \"\\\"$(SRCROOT)/lib/\\\"\","
-          ,"          \"\\\"$(SRCROOT)/../hx-out/\\\"\","
-          ,"        );"
-          ,"        OTHER_LDFLAGS = ("
-        ]);
-        /*
-      if (hxcpp) {
-        addLine("          \"-lApplicationMain\",");
-      }*/
-      if (SDL) {
-        addLine("          \"-lSDL2\",");
-        addLine("          \"-lSDL2_image\",");
-        addLine("          \"-lSDL2_mixer\",");
-        //addLine("          \"-loutput\",");
-      }
-      addLine("        );");
-    }
     addLine("        HEADER_SEARCH_PATHS = (");
-    if (SDL) {
-      addLine('          "/DevProjects/Mobile/SDL2-2.0.5/include/",');
-      addLine('          "/DevProjects/Libs/SDL_image/include/",');
-      addLine('          "/DevProjects/Libs/SDL_mixer/include/",');
-    }
     addLine('          "../hx/include/",');
     addLine('          "../hx-out/",');
     addLine('          "${HXCPP_PATH}/include/"'); //<--
     addLine("        );");
-      /*
-    if (libs.length > 0) {
-      addLines([
-           "        \"LIBRARY_SEARCH_PATHS\" = ("
-          ,"          \"$(inherited)\","
-          ,"          \"\\\"$(SRCROOT)/lib/\\\"\","
-          ,"        );"
-          ,"        HEADER_SEARCH_PATHS = \"/DevProjects/Mobile/SDL2-2.0.5/include\";"
-          ,"        OTHER_LDFLAGS = ("
-        ]);
-      for (l in libs) {
-        addLines(["          \"-l" + l.path + "\","]);
-      }
-      addLines([
-           "        );"
-        ]);
-    }
-      */
     addLines([
          "      };"
         ,"      name = Release;"
@@ -316,17 +271,7 @@ class XCProject {
         ,"      isa = PBXGroup;"
         ,"      children = ("
         ,"        " + uuid("product") + ","
-      ]);
-    if (SDL) {
-      addLine("        " + uuid("SDLproduct") + ",");
-    }
-    /*
-    if (hxcpp) {
-      addLine("        " + uuid("HXCPPproduct") + ",");
-    }
-    */
-    addLines([
-         "      );"
+        ,"      );"
         ,"      name = Products;"
         ,"      sourceTree = \"<group>\";"
         ,"    };"
@@ -336,7 +281,6 @@ class XCProject {
         ,"      buildPhases = ("
         ,"        " + uuid("phaseSources") + ","
         ,"        " + uuid("phaseFrameworks") + ","
-//        ,"        " + uuid("phaseProducts") + ","
         ,"      );"
         ,"      buildRules = ("
         ,"      );"
@@ -377,9 +321,7 @@ class XCProject {
          "      );"
         ,"      runOnlyForDeploymentPostprocessing = 0;"
         ,"    };"
-      ]);
-    addLines([
-         "  };"
+        ,"  };"
         ,"  rootObject = " + uuid("root") + ";"
         ,"}"
       ]);
