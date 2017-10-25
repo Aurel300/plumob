@@ -133,5 +133,6 @@ Strings in the `deploy` and `test` arrays are interpreted as Haxe templates. The
 The following platforms are currently supported:
 
 | Name | Description | Applicable keys in `env` |
+| ---- | ----------- | ------------------------ |
 | `ios-sim` | iOS simulator. | `xcode_developer_dir`, `xcode_ios_sdk_sim`, `ldid_path` |
 | `ios-armv7`, `ios-arm64` | ARMv7 and ARM64 iOS device. | `xcode_developer_dir`, `xcode_ios_sdk`, `ldid_path` |
