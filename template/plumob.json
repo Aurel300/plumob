@@ -1,0 +1,31 @@
+{
+   "name": "Application name"
+  ,"package": "com.example.app"
+  ,"version": "1.0.0"
+  ,"targets": [
+    {
+       "name": "sim"
+      ,"arch": ["ios-sim"]
+      ,"build-flags-haxe": [
+        "-D", "IPHONE_VER=8.4"
+      ]
+      ,"deploy": [
+        "::env.xcode_developer_dir::/usr/bin/simctl install booted ::arch.product.app::"
+      ]
+      ,"test": [
+         "::env.xcode_developer_dir::/usr/bin/simctl install booted ::product.path::"
+        ,"::env.xcode_developer_dir::/usr/bin/simctl launch booted ::package::"
+      ]
+    }, {
+       "name": "iphone"
+      ,"arch": ["ios-armv7", "ios-arm64"]
+      ,"build-flags-haxe": [
+        "-D", "IPHONE_VER=8.4"
+      ]
+      ,"deploy": [
+      ]
+      ,"test": [
+      ]
+    }
+  ]
+}

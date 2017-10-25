@@ -1,0 +1,23 @@
+{
+   "name": "Example iOS app"
+  ,"package": "plumob.example.app"
+  ,"version": "1.0.0"
+  ,"targets": [
+    {
+       "name": "sim"
+      ,"arch": ["ios-sim"]
+      ,"haxelibs": ["objc-uikit10.2"]
+      ,"deploy": [
+        "::env.xcode_developer_dir::/usr/bin/simctl install booted ::arch.product.app::"
+      ]
+      ,"test": [
+         "/DevProjects/Mobile/XCC/Developer/usr/bin/simctl install booted ::product.path::"
+        ,"/DevProjects/Mobile/XCC/Developer/usr/bin/simctl launch booted ::package::"
+      ]
+    }, {
+       "name": "iphone"
+      ,"arch": ["ios-armv7", "ios-arm64"]
+      ,"haxelibs": ["objc-uikit10.2"]
+    }
+  ]
+}

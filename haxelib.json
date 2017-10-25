@@ -1,0 +1,12 @@
+{
+   "name": "plumob"
+  ,"url": ""
+  ,"license": "MIT"
+  ,"tags": ["cross", "ios"]
+  ,"description": ""
+  ,"version": "0.0.1"
+  ,"classPath": "src"
+  ,"releasenote": ""
+  ,"contributors": ["Aurel300"]
+  ,"dependencies": {}
+}
