@@ -123,7 +123,9 @@ class Project {
         if (t.exists("haxelibs")) {
           haxelibs = (cast t.get("haxelibs"):Array<String>);
         }
-        haxelibs.push("plumob");
+        if (haxelibs.indexOf("plumob") == -1) {
+          haxelibs.push("plumob");
+        }
         {
            name: (cast t.get("name"):String)
           ,arch: arch

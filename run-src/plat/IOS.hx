@@ -25,15 +25,15 @@ class IOS extends Platform {
     for (f in [
          "main.mm"
         ,"HaxeAppDelegate.mm"
-        ,"HaxeAppDelegate.h"
+        ,"HaxeAppDelegate.h"/*
         ,"HaxeListener.mm"
-        ,"HaxeListener.h"
+        ,"HaxeListener.h"*/
         ,"Prefix.pch"
       ]) {
-      var dest = Path.join([targetPath(), "ios/project", f]);
-      if (!FileSystem.exists(dest)) {
-        Main.copyOrDie(Path.join([Main.SELF, "template/ios/project", f]), dest);
-      }
+      Main.updateTemplate(
+           Path.join([Main.SELF, "template/ios/project", f])
+          ,Path.join([targetPath(), "ios/project", f])
+        );
     }
     Main.runOrDie("haxe", [
       for (l in project.activeTarget.haxelibs) for (f in ["-lib", l]) f

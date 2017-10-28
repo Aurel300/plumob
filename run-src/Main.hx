@@ -74,6 +74,22 @@ class Main {
     return true;
   }
   
+  public static function updateTemplate(src:String, dest:String):Void {
+    if (!FileSystem.exists(src)) {
+      error("template not found: " + src);
+      return;
+    }
+    if (!FileSystem.exists(dest)) {
+      Main.copyOrDie(src, dest);
+      return;
+    }
+    var srcTime = FileSystem.stat(src).mtime.getTime();
+    var destTime = FileSystem.stat(dest).mtime.getTime();
+    if (srcTime > destTime) {
+      Main.copyOrDie(src, dest);
+    }
+  }
+  
   public static function platform(name:String):Platform {
     for (p in PLATFORMS) {
       var pr = p.find(name);

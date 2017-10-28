@@ -9,8 +9,7 @@ class Events {
   public static function listen(
     control:UIControl, event:UIControlEvents, handler:Void->Void
   ):EventListener {
-    var ret = new EventListener(control, event, handler);
-    ret.native = HaxeListener.make(listenerId);
+    var ret = new EventListener(control, event, handler, listenerId);
     control.addTarget_action_forControlEvents(
         ret.native, untyped __cpp__("@selector(handle:)"), event
       );
@@ -24,17 +23,41 @@ class Events {
   }
 }
 
+@:objc
+@:build(plumob.ObjCWrap.wrap({
+     hppImports: ["<UIKit/UIKit.h>"]
+    ,cppImports: ["<plumob/ios/Events.h>"]
+    ,name: "EventListenerNative"
+    ,ext: "NSObject"
+    ,protocols: []
+    ,fields: [
+        {name: "listener", type: "int"}
+      ]
+    ,methods: [{
+         args: [{desc: "handle", name: "sender", type: "id"}]
+        ,code: "::plumob::ios::Events_obj::handleNative(self->listener);"
+        ,ret: "void"
+      }]
+  }))
 class EventListener {
   public var control:UIControl;
   public var event:UIControlEvents;
   public var handler:Void->Void;
-  public var native:HaxeListener;
+  public var native:EventListenerNative;
   
   public function new(
-    control:UIControl, event:UIControlEvents, handler:Void->Void
+    control:UIControl, event:UIControlEvents, handler:Void->Void, listener:Int
   ) {
     this.control = control;
     this.event = event;
     this.handler = handler;
+    native = EventListenerNative.make(listener);
   }
+}
+
+@:objc
+@:native("EventListenerNative")
+extern class EventListenerNative {
+  @:native("make:listener")
+  public static function make(listener:Int):EventListenerNative;
 }

@@ -65,9 +65,9 @@ class IOSGroup extends Platform {
     proj.addSource(ObjCpp("main.mm"));
     proj.addSource(ObjCpp("HaxeAppDelegate.mm"));
     proj.addSource(ObjCHeader("HaxeAppDelegate.h"));
+    /*
     proj.addSource(ObjCpp("HaxeListener.mm"));
     proj.addSource(ObjCHeader("HaxeListener.h"));
-    /*
     proj.addSource(ObjCpp("HaxeView.mm"));
     proj.addSource(ObjCpp("HaxeView.h"));
     proj.addSource(ObjCpp("HaxeViewController.mm"));
