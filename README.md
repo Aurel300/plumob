@@ -39,6 +39,16 @@ Plumob was only tested on a vagrant box packaged with OS X Sierra, XCode 8.2, an
 
  - [`vagrant-box-osx`](https://github.com/AndrewDryga/vagrant-box-osx).
 
+Once the dependencies are installed, clone this repository with haxelib and then build the run script:
+
+```
+haxelib git plumob https://github.com/Aurel300/plumob
+cd <plumob install path>/run-src
+haxe make.hxml
+```
+
+You can find out your `<plumob install path>` with `haxelib path plumob` after the first step.
+
 With this, builds should work. The Objective-C glue code will ensure your project's `Main.main()` method is called when the app is launched. However, the window creation, as well as view / view controller initialisation is not done. Your project should do this. It is recommended to use:
 
  - [`hx-objc-externs`](https://github.com/Aurel300/hx-objc-externs)

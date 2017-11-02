@@ -14,7 +14,7 @@ class Project {
     ];
   public static var ALL_CONFIG:Array<String> = [
        "name", "slug", "package", "version", "default-target", "build-dir"
-      ,"env", "targets"
+      ,"env", "assets", "targets"
     ];
   
   public static var REQUIRED_TARGET:Array<String> = [
@@ -70,6 +70,7 @@ class Project {
   public var version:String;
   public var defaultTarget:String;
   public var buildDir:String;
+  public var assets:Array<String>;
   public var env:DynamicAccess<String>;
   public var targets:Array<Target>;
   public var activeTarget:Target;
@@ -91,6 +92,7 @@ class Project {
     pack = config.get("package");
     version = (config.exists("version") ? config.get("version") : "1.0.0");
     buildDir = (config.exists("build-dir") ? config.get("build-dir") : "build");
+    assets = (config.exists("assets") ? config.get("assets") : []);
     env = (config.exists("env") ? config.get("env") : {});
     var ctargets:Array<DynamicAccess<Dynamic>> = config.get("targets");
     function parseCommands(cs:Array<Dynamic>):Array<Command> {

@@ -83,10 +83,12 @@ class IOSGroup extends Platform {
       proj.arch.push("armv7"); // TODO: probably shouldn't be here?
       Main.runOrDie("lipo", [
           "-create"
-        ].concat(Main.glob(~/^liboutput\.iphoneos([^\.]*)\.a$/, "ios/hx"))
-        .concat([
+        ].concat(Main.glob(
+           ~/^liboutput\.iphoneos([^\.]*)\.a$/
+          ,Path.join([targetPath(), "ios/hx"])
+        )).concat([
           "-output", "../hx-out/hx.fat-iphoneos.a"
-        ]), "ios/hx");
+        ]), Path.join([targetPath(), "ios/hx"]));
       proj.addSource(Archive("libMain.iphoneos.a", "../hx-out/hx.fat-iphoneos.a"));
     }
     File.saveContent(
@@ -126,6 +128,12 @@ class IOSGroup extends Platform {
       ] : []), Path.join([
         targetPath(), "ios/project"
       ]));
+    for (asset in project.assets) {
+      Main.updateTemplate(
+           Path.join(["assets", asset])
+          ,Path.join([productPaths()[0], asset])
+        );
+    }
     if (project.env.exists("ldid_path")) {
       for (p in productPaths()) {
         Main.runOrDie(project.env.get("ldid_path"), [
