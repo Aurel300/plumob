@@ -27,11 +27,10 @@ class Events {
 @:build(plumob.ObjCWrap.wrap({
      hppImports: ["<UIKit/UIKit.h>"]
     ,cppImports: ["<plumob/ios/Events.h>"]
-    ,name: "EventListenerNative"
     ,ext: "NSObject"
     ,protocols: []
     ,fields: [
-        {name: "listener", type: "int"}
+        {name: "listener", type: "Int", nativeType: "int"}
       ]
     ,methods: [{
          args: [{desc: "handle", name: "sender", type: "id"}]
@@ -53,11 +52,4 @@ class EventListener {
     this.handler = handler;
     native = EventListenerNative.make(listener);
   }
-}
-
-@:objc
-@:native("EventListenerNative")
-extern class EventListenerNative {
-  @:native("make:listener")
-  public static function make(listener:Int):EventListenerNative;
 }

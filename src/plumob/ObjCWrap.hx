@@ -11,12 +11,12 @@ class ObjCWrap {
       case {expr: EObjectDecl([
            {field: "hppImports", expr: {expr: EArrayDecl(hppImportsRaw), pos: _}}
           ,{field: "cppImports", expr: {expr: EArrayDecl(cppImportsRaw), pos: _}}
-          ,{field: "name", expr: {expr: EConst(CString(name)), pos: _}}
           ,{field: "ext", expr: {expr: EConst(CString(ext)), pos: _}}
           ,{field: "protocols", expr: {expr: EArrayDecl(protocolsRaw), pos: _}}
           ,{field: "fields", expr: {expr: EArrayDecl(fieldsRaw), pos: _}}
           ,{field: "methods", expr: {expr: EArrayDecl(methodsRaw), pos: _}}
         ]), pos: _}:
+      var name = cls.name + "Native";
       function parseArr(e:Array<Expr>):Array<String> {
         return [ for (er in e) switch (er) {
             case {expr: EConst(CString(str)), pos: _}: str;
@@ -30,8 +30,14 @@ class ObjCWrap {
           case {expr: EObjectDecl([
                {field: "name", expr: {expr: EConst(CString(name)), pos: _}}
               ,{field: "type", expr: {expr: EConst(CString(type)), pos: _}}
+              ,{field: "nativeType", expr: {expr: EConst(CString(nativeType)), pos: _}}
             ]), pos: _}:
-          {name: name, type: type};
+          var typePack = type.split(".");
+          var typeName = typePack.pop();
+          {name: name, type: TPath({
+               name: typeName
+              ,pack: typePack
+            }), nativeType: nativeType};
           case _: throw "invalid @:wrap sytnax";
         } ];
       var methods = [ for (methodRaw in methodsRaw) switch (methodRaw) {
@@ -54,7 +60,7 @@ class ObjCWrap {
       var cppCode = [ for (imp in cppImports) '#import $imp\n' ].join("")
         + '@implementation $name
 + (${name}*)make:'
-        + [ for (field in fields) '(${field.type})_${field.name}' ].join(":")
+        + [ for (field in fields) '(${field.nativeType})_${field.name}' ].join(":")
         + ' {
   ${name}* ret = [${name} alloc];
 ' + [ for (field in fields) '  ret->${field.name} = _${field.name};' ].join("\n") + '
@@ -68,16 +74,38 @@ class ObjCWrap {
       var hppCode = [ for (imp in hppImports) '#import $imp\n' ].join("")
         + '@interface $name: $ext '
         + (protocols.length > 0 ? "<" + [ for (p in protocols) p ].join(", ") + "> " : "") + '{
-' + [ for (field in fields) '  ${field.type} ${field.name};' ].join("\n") + '
+' + [ for (field in fields) '  ${field.nativeType} ${field.name};' ].join("\n") + '
 }
 + (${name}*)make:'
-        + [ for (field in fields) '(${field.type})_${field.name}' ].join(":")
+        + [ for (field in fields) '(${field.nativeType})_${field.name}' ].join(":")
         + ';
 ' + [ for (m in methods) '- (${m.ret})' + [ for (a in m.args) '${a.desc}:(${a.type})${a.name}' ].join(" ") + ';' ].join("\n") + '
 @end
 ';
       cls.meta.add(":cppFileCode", [{expr: EConst(CString(cppCode)), pos: pos}], pos);
       cls.meta.add(":headerCode", [{expr: EConst(CString(hppCode)), pos: pos}], pos);
+      var nativeType:ComplexType = TPath({name: name, pack: cls.pack});
+      Context.defineType({
+          fields: [{
+               access: [APublic, AStatic]
+              ,kind: FFun({
+                   args: [ for (field in fields) {name: field.name, type: field.type} ]
+                  ,expr: null
+                  ,ret: nativeType
+                })
+              ,name: "make"
+              ,pos: pos
+            }]
+          ,isExtern: true
+          ,kind: TDClass(null, [], false)
+          ,meta: [
+               {name: ":objc", pos: pos}
+              ,{name: ":native", params: [{expr: EConst(CString(name)), pos: pos}], pos: pos}
+            ]
+          ,name: name
+          ,pack: cls.pack
+          ,pos: pos
+        });
       case _:
       throw "invalid @:wrap syntax";
     }
