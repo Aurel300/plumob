@@ -94,6 +94,9 @@ class Project {
     buildDir = (config.exists("build-dir") ? config.get("build-dir") : "build");
     assets = (config.exists("assets") ? config.get("assets") : []);
     env = (config.exists("env") ? config.get("env") : {});
+    if (env.exists("hxcpp_path")) {
+      XCProject.HXCPP_PATH = env.get("hxcpp_path");
+    }
     var ctargets:Array<DynamicAccess<Dynamic>> = config.get("targets");
     function parseCommands(cs:Array<Dynamic>):Array<Command> {
       return [ for (c in cs) {

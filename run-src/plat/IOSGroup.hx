@@ -91,6 +91,12 @@ class IOSGroup extends Platform {
         ]), Path.join([targetPath(), "ios/hx"]));
       proj.addSource(Archive("libMain.iphoneos.a", "../hx-out/hx.fat-iphoneos.a"));
     }
+    if (XCProject.HXCPP_PATH == null) {
+      XCProject.HXCPP_PATH = Main.runFull(
+          "haxelib", ["path", "hxcpp"]
+        ).output.split("\n")[0];
+      trace("autodetected HXCPP: " + XCProject.HXCPP_PATH);
+    }
     File.saveContent(
          Path.join([targetPath(), "ios/project/Info.plist"])
         ,proj.encodePlist()
@@ -101,28 +107,28 @@ class IOSGroup extends Platform {
       );
     var dev = xcodeDir();
     var sdk = (
-        project.env.exists("xcode_sdk_ios")
-        ? project.env.get("xcode_sdk_ios")
-        : Path.join([
-             dev
-            ,"/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.2.sdk"
-          ])
-      );
-    var sdkSim = (
-        project.env.exists("xcode_sdk_ios_sim")
-        ? project.env.get("xcode_sdk_ios_sim")
-        : Path.join([
-             dev
-            ,"/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator10.2.sdk"
-          ])
+        sim
+        ? (project.env.exists("xcode_sdk_ios_sim")
+            ? project.env.get("xcode_sdk_ios_sim")
+            : Path.join([
+                   dev
+                  ,"/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk"
+                ])
+          )
+        : (project.env.exists("xcode_sdk_ios")
+            ? project.env.get("xcode_sdk_ios")
+            : Path.join([
+                   dev
+                  ,"/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneOS.sdk"
+                ])
+          )
       );
     Main.runOrDie(Path.join([
         dev, "/usr/bin/xcodebuild"
       ]), [
          "CODE_SIGNING_REQUIRED=NO"
         ,"-verbose"
-        ,"-sdk", sim ? sdkSim : sdk
-      ].concat(sim ? [
+      ].concat(sdk == null ? [] : ["-sdk", sdk]).concat(sim ? [
          'ARCHS="x86_64"' // TODO: 32-bit?
         ,"ONLY_ACTIVE_ARCH=NO"
       ] : []), Path.join([

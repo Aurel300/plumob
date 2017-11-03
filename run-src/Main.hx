@@ -1,6 +1,7 @@
 import haxe.io.Path;
 import sys.FileSystem;
 import sys.io.File;
+import sys.io.Process;
 import plat.*;
 
 import Project.ProjectStatus;
@@ -34,6 +35,23 @@ class Main {
       case Misconfig(err): error("project misconfigured: " + err);
       case Error(err): error(Std.string(err));
     }
+  }
+  
+  public static function runFull(
+    cmd:String, args:Array<String>, ?dir:String
+  ):{exit:Int, output:String} {
+    var oldCwd = Sys.getCwd();
+    if (dir != null) {
+      Sys.setCwd(Path.join([Sys.getCwd(), dir]));
+    }
+    Sys.println('$cmd $args');
+    var proc = new Process(cmd, args);
+    var exit = proc.exitCode();
+    var output = proc.stdout.readAll().toString();
+    if (dir != null) {
+      Sys.setCwd(oldCwd);
+    }
+    return {exit: exit, output: output};
   }
   
   public static function run(cmd:String, args:Array<String>, ?dir:String):Int {

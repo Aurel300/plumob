@@ -1,5 +1,6 @@
 class XCProject {
-  public static inline var HXCPP_PATH = "/usr/local/lib/haxe/lib/hxcpp/git";
+  public static var HXCPP_PATH:String = null;
+  // "/usr/local/lib/haxe/lib/hxcpp/git"
   
   public var name:String;
   public var pack:String;
@@ -227,7 +228,7 @@ class XCProject {
     addLine("        HEADER_SEARCH_PATHS = (");
     addLine('          "../hx/include/",');
     addLine('          "../hx-out/",');
-    addLine('          "${HXCPP_PATH}/include/"'); //<--
+    addLine('          "${HXCPP_PATH}/include/"');
     addLine("        );");
     addLines([
          "      };"
