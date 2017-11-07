@@ -119,7 +119,7 @@ class IOSGroup extends Platform {
             ? project.env.get("xcode_sdk_ios")
             : Path.join([
                    dev
-                  ,"/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneOS.sdk"
+                  ,"/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk"
                 ])
           )
       );

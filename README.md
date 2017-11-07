@@ -110,6 +110,7 @@ Environmental variables recognised:
 
 | Key | Description |
 | --- | ----------- |
+| `hxcpp_path` | Path to the `hxcpp` root directory. Defaults to the path obtained with `haxelib path hxcpp` |
 | `ldid_path` | Path to the `ldid` binary which will be used to self-sign apps. |
 | `xcode_developer_dir` | Path to Xcode's Developer directory. Defaults to: `/Applications/Xcode.app/Contents/Developer` |
 | `xcode_sdk_ios` | Path to the SDK to use when building for the iOS. Defaults to: `xcode_developer_dir` + `/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.2.sdk` |
