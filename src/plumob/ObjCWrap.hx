@@ -4,6 +4,27 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 
 class ObjCWrap {
+  /*
+  public static function extend():Array<Field> {
+    var pos = Context.currentPos();
+    var cls = Context.getLocalClass().get();
+    var fields = Context.getBuildFields();
+    return null;
+  }
+  */
+  /*
+  public static macro function anonymousClass(fields:Expr):Expr {
+    var pos = Context.currentPos();
+    var protocol = Context.getExpectedType();
+    if (protocol == null) {
+      throw "unknown type for anonymousClass";
+    }
+    trace(protocol);
+    throw "ok";
+    return macro [];
+  }
+  */
+  
   public static function wrap(specRaw:Expr):Array<Field> {
     var pos = Context.currentPos();
     var cls = Context.getLocalClass().get();
@@ -46,7 +67,7 @@ class ObjCWrap {
               ,{field: "code", expr: {expr: EConst(CString(code)), pos: _}}
               ,{field: "ret", expr: {expr: EConst(CString(ret)), pos: _}}
             ]), pos: _}:
-          {name: name, code: code, args: [ for (argRaw in argsRaw) switch (argRaw) {
+          {name: "", code: code, args: [ for (argRaw in argsRaw) switch (argRaw) {
               case {expr: EObjectDecl([
                    {field: "desc", expr: {expr: EConst(CString(desc)), pos: _}}
                   ,{field: "name", expr: {expr: EConst(CString(name)), pos: _}}
@@ -55,18 +76,24 @@ class ObjCWrap {
               {desc: desc, name: name, type: type};
               case _: throw "invalid @:wrap sytnax";
             } ], ret: ret};
+          case {expr: EObjectDecl([
+               {field: "name", expr: {expr: EConst(CString(name)), pos: _}}
+              ,{field: "code", expr: {expr: EConst(CString(code)), pos: _}}
+              ,{field: "ret", expr: {expr: EConst(CString(ret)), pos: _}}
+            ]), pos: _}:
+          {name: name, code: code, args: [], ret: ret};
           case _: throw "invalid @:wrap sytnax";
         } ];
       var cppCode = [ for (imp in cppImports) '#import $imp\n' ].join("")
         + '@implementation $name
-+ (${name}*)make:'
-        + [ for (field in fields) '(${field.nativeType})_${field.name}' ].join(":")
++ (${name}*)make'
+        + [ for (field in fields) ':(${field.nativeType})_${field.name}' ].join("")
         + ' {
   ${name}* ret = [${name} alloc];
 ' + [ for (field in fields) '  ret->${field.name} = _${field.name};' ].join("\n") + '
   return ret;
 }
-' + [ for (m in methods) '- (${m.ret})' + [ for (a in m.args) '${a.desc}:(${a.type})${a.name}' ].join(" ") + ' {
+' + [ for (m in methods) '- (${m.ret})${m.name}' + [ for (a in m.args) '${a.desc}:(${a.type})${a.name}' ].join(" ") + ' {
   ${m.code}
 }' ].join("\n") + '
 @end
@@ -76,10 +103,10 @@ class ObjCWrap {
         + (protocols.length > 0 ? "<" + [ for (p in protocols) p ].join(", ") + "> " : "") + '{
 ' + [ for (field in fields) '  ${field.nativeType} ${field.name};' ].join("\n") + '
 }
-+ (${name}*)make:'
-        + [ for (field in fields) '(${field.nativeType})_${field.name}' ].join(":")
++ (${name}*)make'
+        + [ for (field in fields) ':(${field.nativeType})_${field.name}' ].join("")
         + ';
-' + [ for (m in methods) '- (${m.ret})' + [ for (a in m.args) '${a.desc}:(${a.type})${a.name}' ].join(" ") + ';' ].join("\n") + '
+' + [ for (m in methods) '- (${m.ret})${m.name}' + [ for (a in m.args) '${a.desc}:(${a.type})${a.name}' ].join(" ") + ';' ].join("\n") + '
 @end
 ';
       cls.meta.add(":cppFileCode", [{expr: EConst(CString(cppCode)), pos: pos}], pos);
